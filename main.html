@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GothCon skylt</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet"> 
+</head>
+
+
+<body>
+    <script>
+        let searchParams = new URLSearchParams(document.location.search);
+        const currentUrl = new URL(window.location.href);
+        function updateHeader(value) {
+            document.getElementById('heading_field').innerText = value;
+            searchParams.set("heading_field", value);
+            currentUrl.search = searchParams;
+            window.history.replaceState(null, '', currentUrl);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            if (searchParams.has("heading_field")) {
+                updateHeader(searchParams.get("heading_field"));
+            }
+
+            const sidePanel = document.getElementById('sidePanel');
+            const toggleButton = document.getElementById('toggleButton');
+
+            toggleButton.addEventListener('click', function () {
+                sidePanel.classList.toggle('side-panel-visible');
+            });
+        });
+    </script>
+    <button id="toggleButton" class="hide_on_print">Toggle Side Panel</button>
+    <div id="sidePanel" class="side-panel hide_on_print">
+        <h2>Side Panel Content</h2>
+        <div>
+            Rubrik <input type="text" oninput="(e => updateHeader(e.target.value))(event)" value="Rubrik">
+        </div>
+        <div>
+            Meddelande <textarea
+                oninput="(e => document.getElementById('message_field').innerText = e.target.value)(event)"
+                value="Meddelande"></textarea>
+        </div>
+        <!-- Add your side panel content here -->
+    </div>
+
+    <div class="body white-background">
+        <div class="outer-border center">
+        </div>
+        <div class="center">
+            <div class="container">
+                <img id="logo" class="logo" src="TextLogga_Black.png">
+            </img>
+                <p id="heading_field" class="heading">Rubriken hamnar här
+                </p>
+                <p id="message_field" class="message">Meddelande hamnar här
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
