@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap" rel="stylesheet">
 </head>
 
 
@@ -17,15 +17,38 @@
     <script>
         let searchParams = new URLSearchParams(document.location.search);
         const currentUrl = new URL(window.location.href);
+        function debounce(func, timeout = 300) {
+
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { func.apply(this, args); console.log(timeout); }, timeout);
+            };
+        }
+        const debounceUpdateHeader = debounce(updateHeader);
+        const debounceUpdateMessage = debounce(updateMessage);
+
         function updateHeader(value) {
             document.getElementById('heading_field').innerText = value;
             searchParams.set("heading_field", value);
             currentUrl.search = searchParams;
-            window.history.replaceState(null, '', currentUrl);
+            window.history.replaceState(history.state, '', currentUrl);
+        }
+
+        function updateMessage(value) {
+            document.getElementById('message_field').innerText = value;
+            searchParams.set("message_field", value);
+            currentUrl.search = searchParams;
+            window.history.replaceState(history.state, '', currentUrl);
         }
         document.addEventListener('DOMContentLoaded', function () {
             if (searchParams.has("heading_field")) {
                 updateHeader(searchParams.get("heading_field"));
+                document.getElementById('header').value = searchParams.get("heading_field");
+            }
+            if (searchParams.has("message_field")) {
+                updateMessage(searchParams.get("message_field"));
+                document.getElementById('message').value = searchParams.get("message_field");
             }
 
             const sidePanel = document.getElementById('sidePanel');
@@ -37,15 +60,18 @@
         });
     </script>
     <button id="toggleButton" class="hide_on_print">Toggle Side Panel</button>
-    <div id="sidePanel" class="side-panel hide_on_print">
+    <div id="sidePanel" class="side-panel side-panel-visible hide_on_print">
         <h2>Side Panel Content</h2>
         <div>
-            Rubrik <input type="text" oninput="(e => updateHeader(e.target.value))(event)" value="Rubrik">
+            Rubrik <div>
+                <input type="text" id="header" oninput="(e => debounceUpdateHeader(e.target.value))(event)" value="Rubrik">
+            </div>
         </div>
         <div>
-            Meddelande <textarea
-                oninput="(e => document.getElementById('message_field').innerText = e.target.value)(event)"
-                value="Meddelande"></textarea>
+            Meddelande 
+            <div>
+                <textarea id="message" oninput="(e => debounceUpdateMessage(e.target.value))(event)" value="Meddelande"></textarea>
+            </div>
         </div>
         <!-- Add your side panel content here -->
     </div>
@@ -56,7 +82,7 @@
         <div class="center">
             <div class="container">
                 <img id="logo" class="logo" src="TextLogga_Black.png">
-            </img>
+                </img>
                 <p id="heading_field" class="heading">Rubriken hamnar här
                 </p>
                 <p id="message_field" class="message">Meddelande hamnar här
